@@ -13,3 +13,6 @@ const totalBalances = infos.reduce((total, person) => {
   return total;
 }, 0);
 console.log(totalBalances);
+
+const findName = infos.find(({ name }) => name === "Claire Jones");
+console.log(findName);
