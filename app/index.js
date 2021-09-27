@@ -1,32 +1,25 @@
-import data from "./data.js";
+import faker from "faker";
+import { promises as fs } from "fs";
 
-const highestMileageVehicle = data
-  .map(({ vehicles }) => vehicles.sort((a, b) => b.mileage - a.mileage)[0])
-  .sort((a, b) => b.mileage - a.mileage)[0];
+const data = Array.from({ length: 50 }, (_, i) => ({
+  id: i + 1,
+  name: faker.name.findName(),
+  email: faker.internet.email(),
+  phone: faker.phone.phoneNumber(),
+  avatar: faker.image.avatar(),
+  Accounts: Array.from(
+    { length: faker.datatype.number({ min: 1, max: 5 }) },
+    (_, i) => ({
+      id: i + 1,
+      companyName: faker.company.companyName(),
+      accountName: faker.finance.accountName(),
+      currency: faker.finance.currencyCode(),
+      balance: faker.finance.amount(1, 10000, 2),
+    })
+  ),
+}));
 
-const totalMileage = data.reduce((total, currentPerson) => {
-  total += currentPerson.vehicles.reduce((personTotal, currentVehicle) => {
-    personTotal += currentVehicle.mileage;
-    return personTotal;
-  }, 0);
-
-  return total;
-}, 0);
-
-const yahooEmails = data
-  .filter(({ email }) => email.endsWith("yahoo.com"))
-  .map(({ email }) => email);
-
-const hiMileageVehicles = data
-  .map(({ vehicles }) => vehicles.filter(({ mileage }) => mileage >= 36000))
-  .flat();
-
-const totalMileage4IL = data
-  .map(({ vehicles }) => vehicles.filter(({ st }) => st === "Illinois"))
-  .flat()
-  .reduce((total, currentVehicle) => {
-    total += currentVehicle.mileage;
-    return total;
-  }, 0);
-
-console.log(totalMileage4IL);
+fs.writeFile(
+  "./app/data.js",
+  `export default ${JSON.stringify(data, null, 2)}`
+);
